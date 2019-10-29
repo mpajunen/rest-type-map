@@ -1,0 +1,15 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "target": "es5",
+    "lib": [
+      "esnext"
+    ],
+    "module": "commonjs",
+    "noEmit": false,
+    "outDir": "build-server"
+  },
+  "include": [
+    "src/server.ts"
+  ]
+}

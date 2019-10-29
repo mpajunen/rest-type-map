@@ -19,10 +19,13 @@
   },
   "scripts": {
     "start": "react-scripts start",
+    "server:build": "tsc --project ./tsconfig.server.json",
+    "server:start": "yarn server:build && node ./build-server/server.js --experimental-modules",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
+  "proxy": "http://localhost:3101/",
   "eslintConfig": {
     "extends": "react-app"
   },
