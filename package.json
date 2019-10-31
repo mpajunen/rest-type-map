@@ -1,0 +1,16 @@
+{
+  "name": "@mpajunen/rest-type-map",
+  "version": "0.1.0",
+  "description": "Utility library for writing type-safe REST APIs",
+  "main": "./dist/index.js",
+  "repository": "https://github.com/mpajunen/rest-type-map.git",
+  "author": "Mikael Pajunen",
+  "license": "MIT",
+  "private": false,
+  "scripts": {
+    "build": "tsc"
+  },
+  "devDependencies": {
+    "typescript": "^3.6.4"
+  }
+}
