@@ -1,34 +1,30 @@
 import { Endpoint, HttpMethod, Routes } from './Common'
 
-export type ServerParams<Path, Body> = {
-  path: Stringify<Path>
-  body: Body
+type Params<EP extends Endpoint> = {
+  path: Stringify<EP['path']>
+  body: EP['body']
 }
 
-export type ServerHandler<PathParams, Body, Result> =
-  (params: ServerParams<PathParams, Body>) => Promise<Result>
+type EpHandler<EP extends Endpoint> = (params: Params<EP>) => Promise<EP['result']>
 
-export type ServerHandlers<T> = {
-  [K in keyof T]: T[K] extends Endpoint<infer PathParams, infer Body, infer Result, infer Path, infer Method>
-    ? ServerHandler<PathParams, Body, Result>
-    : never
-}
+export type Handlers<T> = { [K in keyof T]: T[K] extends Endpoint ? EpHandler<T[K]> : never }
+export type Handler<T, K extends keyof T> = Handlers<T>[K]
 
-export type Stringify<T> = {
+type Stringify<T> = {
   [K in keyof T]: T[K] extends string ? T[K] : string
 }
 
-export function addServerApi<T>(router: Router, routes: Routes<T>, handlers: ServerHandlers<T>): void {
+export function addHandlers<T>(router: Router, routes: Routes<T>, handlers: Handlers<T>): void {
   for (const name in routes) {
-    const { method, path } = routes[name]
+    const { method, pattern } = routes[name]
 
-    router[method as HttpMethod](path as string, createHandler(handlers[name]))
+    router[method](pattern, createHandler(handlers[name]))
   }
 }
 
-const createHandler = <PathParams, Body, Result>(
-  handler: ServerHandler<PathParams, Body, Result>
-) => async (req: Request<PathParams, Body>, res: Response<Result>): Promise<void> => {
+const createHandler = <EP extends Endpoint>(
+  handler: EpHandler<EP>
+) => async (req: Request<EP['path'], EP['body']>, res: Response<EP['result']>): Promise<void> => {
   try {
     const result = await handler({ path: req.params, body: req.body })
 

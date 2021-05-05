@@ -1,42 +1,45 @@
 import { Endpoint, HttpMethod, Route, Routes } from './Common'
 
-export type ClientApi<T> = {
-  [K in keyof T]: T[K] extends Endpoint<infer PathParams, infer Body, infer Result, infer Path, infer Method>
-    ? ClientHandler<PathParams, Body, Result>
-    : never
-}
+type HandlerFull<EP extends Endpoint> = (params: EP['path'], body: EP['body']) => Promise<EP['result']>
+type HandlerPath<EP extends Endpoint> = (params: EP['path']) => Promise<EP['result']>
+type HandlerNone<EP extends Endpoint> = () => Promise<EP['result']>
 
-export type ClientHandler<PathParams, Body, Result> =
-  Body extends object ? (path: PathParams, body: Body) => Promise<Result>
-    : PathParams extends object ? (path: PathParams) => Promise<Result>
-    : () => Promise<Result>
+type EpHandler<EP extends Endpoint> =
+  EP['body'] extends object
+    ? HandlerFull<EP>
+    : EP['path'] extends object
+    ? HandlerPath<EP>
+    : HandlerNone<EP>
 
-export function createClientApi<T>(client: HttpClient, routes: Routes<T>): ClientApi<T> {
-  function createHandler<PathParams extends object | undefined, Body extends object | undefined, Result, Path, Method>(
-    route: Route<Path, Method>,
-  ): ClientHandler<PathParams, Body, Result> {
-    return (
-      (path: PathParams, body: Body): Promise<Result> =>
-        client[route.method](getParametrizedPath(route.path, path), body).then(r => r.data)
-    ) as ClientHandler<PathParams, Body, Result>
+export type Handlers<T> = { [K in keyof T]: T[K] extends Endpoint ? EpHandler<T[K]> : never }
+export type Handler<T, K extends keyof T> = Handlers<T>[K]
+
+export function createHandlers<T>(client: HttpClient, routes: Routes<T>): Handlers<T> {
+  function createHandler<EP extends Endpoint>({ method, pattern }: Route<EP>): EpHandler<EP> {
+    const handler: HandlerFull<EP> = (params, data) => {
+      const url = getUrl(pattern, params)
+
+      return client.request<EP['result']>({ data, method, url }).then(r => r.data)
+    }
+
+    return handler as EpHandler<EP>
   }
 
-  const api: ClientApi<T> = {} as ClientApi<T>
+  const handlers = {} as Handlers<T>
   for (const name in routes) {
-    api[name] = createHandler(routes[name] as any) as any
+    handlers[name] = createHandler(routes[name]) as any
   }
 
-  return api
+  return handlers
 }
 
-const getParametrizedPath = (path: string, params: object = {}): string =>
-  Object.entries(params).reduce(
-    (current: string, [name, value]) => current.replace(`:${name}`, value),
+const getUrl = (path: string, params?: object): string =>
+  Object.entries(params ?? {}).reduce(
+    (current: string, [name, value]) => current.replace(`:${name}`, encodeURIComponent(value)),
     path,
   )
 
 // HttpClient helper type, rough match to Axios API
-
 type HttpClient = {
-  [Method in HttpMethod]: (path: string, body?: object) => Promise<{ data: any }>
+  request: <Data>(config: { data?: object, method: HttpMethod, url: string }) => Promise<{ data: Data }>
 }

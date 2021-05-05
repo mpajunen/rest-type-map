@@ -11,34 +11,39 @@ export interface Ship {
 }
 
 const routes = {
-  addShip: { method: 'post', path: '' },
-  editShip: { method: 'put', path: '/:id' },
-  getShip: { method: 'get', path: '/:id' },
-  getShips: { method: 'get', path: '' },
-  removeShip: { method: 'delete', path: '/:id' },
+  addShip: { method: 'post', pattern: '' },
+  editShip: { method: 'put', pattern: '/:id' },
+  getShip: { method: 'get', pattern: '/:id' },
+  getShips: { method: 'get', pattern: '' },
+  removeShip: { method: 'delete', pattern: '/:id' },
 } as const
 
 export const shipRoutes: Routes<ShipApi> = routes
 
 export type ShipApi = typeof routes & {
   addShip: {
-    params: { path: undefined, body: Omit<Ship, 'id'> }
+    path: undefined
+    body: Omit<Ship, 'id'>
     result: Ship
   }
   editShip: {
-    params: { path: { id: number }, body: Omit<Ship, 'id'> }
+    path: { id: number }
+    body: Omit<Ship, 'id'>
     result: Ship
   }
   getShip: {
-    params: { path: { id: number }, body: undefined }
+    path: { id: number }
+    body: undefined
     result: Ship
   }
   getShips: {
-    params: { path: undefined, body: undefined }
+    path: undefined
+    body: undefined
     result: Ship[]
   }
   removeShip: {
-    params: { path: { id: number }, body: undefined }
+    path: { id: number }
+    body: undefined
     result: void
   }
 }

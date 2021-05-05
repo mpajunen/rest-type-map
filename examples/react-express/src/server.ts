@@ -1,10 +1,10 @@
-import { addServerApi, ServerHandlers } from '@mpajunen/rest-type-map'
+import { Server } from '@mpajunen/rest-type-map'
 import bodyParser from 'body-parser'
 import express, { Router } from 'express'
 import { Ship, ShipApi, shipRoutes } from './Model'
 import { createStore, Store } from './serverStore'
 
-const createHandlers = (store: Store<Ship>): ServerHandlers<ShipApi> => ({
+const createHandlers = (store: Store<Ship>): Server.Handlers<ShipApi> => ({
   getShips: async () => store.getAll(),
   getShip: async ({ path }) => store.get(parseInt(path.id)),
   addShip: async ({ body }) => store.add(body),
@@ -20,7 +20,7 @@ function startApp() {
   const router = Router()
   const store = createStore(initialShips)
 
-  addServerApi(router, shipRoutes, createHandlers(store))
+  Server.addHandlers(router, shipRoutes, createHandlers(store))
 
   express()
     .use(bodyParser.json())
