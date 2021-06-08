@@ -1,20 +1,22 @@
 // A basic object data store with CRUD operations
 
-export type Store<T extends { id: number }> = {
-  add(values: Omit<T, 'id'>): T
-  edit(id: number, values: Omit<T, 'id'>): T
-  get(id: number): T
-  getAll(): T[]
+type WithId<T> = T & { id: number }
+
+export type Store<T> = {
+  add(values: T): WithId<T>
+  edit(id: number, values: T): WithId<T>
+  get(id: number): WithId<T>
+  getAll(): WithId<T>[]
   remove(id: number): void
 }
 
-export function createStore<T extends { id: number }>(initialData: Omit<T, 'id'>[]): Store<T> {
-  const add = (values: Omit<T, 'id'>) => {
+export function createStore<T>(initialData: T[]): Store<T> {
+  const add = (values: T) => {
     maxId += 1
     return edit(maxId, values)
   }
-  const edit = (id: number, values: Omit<T, 'id'>) => {
-    const record = { id, ...values } as T
+  const edit = (id: number, values: T) => {
+    const record = { ...values, id }
     data[id] = record
     return record
   }
@@ -24,7 +26,7 @@ export function createStore<T extends { id: number }>(initialData: Omit<T, 'id'>
     delete data[id]
   }
 
-  const data: Record<number, T> = {}
+  const data: Record<number, WithId<T>> = {}
   let maxId = 0
 
   initialData.forEach(add)

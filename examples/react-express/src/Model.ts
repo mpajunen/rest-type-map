@@ -4,11 +4,12 @@ export const shipSizes = ['small', 'medium', 'large', 'huge'] as const
 
 export type ShipSize = typeof shipSizes[number]
 
-export interface Ship {
-  id: number
+export type ShipFeatures = {
   name: string
   size: ShipSize
 }
+
+export type Ship = { id: number } & ShipFeatures
 
 const routes = {
   addShip: { method: 'post', pattern: '' },
@@ -23,12 +24,12 @@ export const shipRoutes: Routes<ShipApi> = routes
 export type ShipApi = typeof routes & {
   addShip: {
     path: undefined
-    body: Omit<Ship, 'id'>
+    body: ShipFeatures
     result: Ship
   }
   editShip: {
     path: { id: number }
-    body: Omit<Ship, 'id'>
+    body: ShipFeatures
     result: Ship
   }
   getShip: {

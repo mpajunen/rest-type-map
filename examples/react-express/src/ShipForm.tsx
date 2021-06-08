@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { api } from './api'
 import './App.css'
-import { Ship, shipSizes } from './Model'
+import { Ship, ShipFeatures, shipSizes } from './Model'
 
 interface Props {
   setShip: (ship: Ship) => void
@@ -11,9 +11,9 @@ interface Props {
 type ChangeEvent = React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
 
 const ShipForm: React.FC<Props> = ({ setShip, ship }) => {
-  const [values, setValues] = useState<Omit<Ship, 'id'>>(ship || { name: '', size: 'small' })
+  const [values, setValues] = useState<ShipFeatures>(ship ?? { name: '', size: 'small' })
 
-  const setField = (fieldName: keyof Ship) => (e: ChangeEvent) => {
+  const setField = (fieldName: keyof ShipFeatures) => (e: ChangeEvent) => {
     const { value } = e.target
 
     setValues(previous => ({ ...previous, [fieldName]: value }))

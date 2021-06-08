@@ -1,10 +1,10 @@
 import { Server } from '@mpajunen/rest-type-map'
 import bodyParser from 'body-parser'
 import express, { Router } from 'express'
-import { Ship, ShipApi, shipRoutes } from './Model'
+import { ShipApi, ShipFeatures, shipRoutes } from './Model'
 import { createStore, Store } from './serverStore'
 
-const createHandlers = (store: Store<Ship>): Server.Handlers<ShipApi> => ({
+const createHandlers = (store: Store<ShipFeatures>): Server.Handlers<ShipApi> => ({
   getShips: async () => store.getAll(),
   getShip: async ({ path }) => store.get(parseInt(path.id)),
   addShip: async ({ body }) => store.add(body),
@@ -12,7 +12,7 @@ const createHandlers = (store: Store<Ship>): Server.Handlers<ShipApi> => ({
   removeShip: async ({ path }) => store.remove(parseInt(path.id)),
 })
 
-const initialShips: Omit<Ship, 'id'>[] = [
+const initialShips: ShipFeatures[] = [
   { name: 'Millennium Falcon', size: 'medium' },
 ]
 
