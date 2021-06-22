@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
+import { Ship, ShipFeatures, shipSizes } from '../common/model'
 import { api } from './api'
 import './App.css'
-import { Ship, ShipFeatures, shipSizes } from './Model'
 
 interface Props {
   setShip: (ship: Ship) => void

@@ -1,8 +1,8 @@
 import { Server } from '@mpajunen/rest-type-map'
 import bodyParser from 'body-parser'
 import express, { Router } from 'express'
-import { ShipApi, ShipFeatures, shipRoutes } from './Model'
-import { createStore, Store } from './serverStore'
+import { ShipApi, ShipFeatures, shipRoutes } from '../common/model'
+import { createStore, Store } from './store'
 
 const createHandlers = (store: Store<ShipFeatures>): Server.Handlers<ShipApi> => ({
   getShips: async () => store.getAll(),

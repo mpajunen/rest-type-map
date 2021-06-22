@@ -1,6 +1,6 @@
 import React from 'react'
+import { Ship } from '../common/model'
 import './App.css'
-import { Ship } from './Model'
 
 interface Props {
   activate: (shipId: number) => void
