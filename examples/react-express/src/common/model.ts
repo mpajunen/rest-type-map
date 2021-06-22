@@ -1,14 +1,19 @@
 import { Routes } from '@mpajunen/rest-type-map'
 
+// Data model
+
 export const shipSizes = ['small', 'medium', 'large', 'huge'] as const
 
 export type ShipSize = typeof shipSizes[number]
 
-export interface Ship {
-  id: number
+export type ShipFeatures = {
   name: string
   size: ShipSize
 }
+
+export type Ship = { id: number } & ShipFeatures
+
+// API model
 
 const routes = {
   addShip: { method: 'post', pattern: '' },
@@ -20,15 +25,15 @@ const routes = {
 
 export const shipRoutes: Routes<ShipApi> = routes
 
-export type ShipApi = typeof routes & {
+type ShipHandlers = {
   addShip: {
     path: undefined
-    body: Omit<Ship, 'id'>
+    body: ShipFeatures
     result: Ship
   }
   editShip: {
     path: { id: number }
-    body: Omit<Ship, 'id'>
+    body: ShipFeatures
     result: Ship
   }
   getShip: {
@@ -47,3 +52,5 @@ export type ShipApi = typeof routes & {
     result: void
   }
 }
+
+export type ShipApi = typeof routes & ShipHandlers

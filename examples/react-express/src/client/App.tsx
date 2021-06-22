@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { api } from './api'
 import './App.css'
-import { Ship } from './Model'
+import { Ship } from '../common/model'
 import ShipForm from './ShipForm'
 import ShipList from './ShipList'
 
