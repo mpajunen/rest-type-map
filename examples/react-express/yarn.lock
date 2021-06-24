@@ -1453,8 +1453,10 @@
     "@types/yargs" "^15.0.0"
     chalk "^4.0.0"
 
-"@mpajunen/rest-type-map@file:../..":
+"@mpajunen/rest-type-map@*":
   version "0.1.0"
+  resolved "https://registry.yarnpkg.com/@mpajunen/rest-type-map/-/rest-type-map-0.1.0.tgz#f2c08608c9188ca096dacc37cd98ae4be6af9eb2"
+  integrity sha512-mmG29JUMG0DCDcqgmDA1NnTGxQigPXGc386yU2ciJ0WDGNmrUtVFXFSZRGnwV1RLEPRaPzXWgIwvE5fq/Nh24w==
 
 "@nodelib/fs.scandir@2.1.5":
   version "2.1.5"
